@@ -1,0 +1,149 @@
+=================================================================
+ AME 531 PROJECT 1: Time-Developing Channel Flow
+ Domain: -1 ≤ y* ≤ 1, Wall shear evaluated at y = +1
+=================================================================
+
+Baseline: Ny=40, dy=0.0500, r=0.4, dt=0.001000
+
+--- Velocity Profiles ---
+  plot01_vel_explicit.png
+    -> data saved: plot01_vel_explicit_numerical.csv
+    -> data saved: plot01_vel_explicit_exact.csv
+  plot02_vel_implicit.png
+    -> data saved: plot02_vel_implicit_numerical.csv
+    -> data saved: plot02_vel_implicit_exact.csv
+  plot03_vel_rk4.png
+    -> data saved: plot03_vel_rk4_numerical.csv
+    -> data saved: plot03_vel_rk4_exact.csv
+
+--- Flow Rate & Wall Shear ---
+  plot04_flowrate.png
+    -> data saved: plot04_flowrate_data.csv
+  plot05_wallshear.png
+    -> data saved: plot05_wallshear_data.csv
+
+--- Effect Studies: Explicit Euler ---
+  (Stability limit: r <= 0.5)
+
+  plot06_eff_dt_explicit.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    dt=0.0005, r=0.20            0.000500     0.0500     0.2000     1.028e-05    7.783e-06
+    dt=0.001,  r=0.40            0.001000     0.0500     0.4000     7.178e-05    5.431e-05
+    dt=0.00125,r=0.50            0.001250     0.0500     0.5000     1.028e-04    7.760e-05
+    dt=0.0015, r=0.60            0.001500     0.0500     0.6000     8.152e+03    5.510e+03
+
+    -> data saved: plot06_eff_dt_explicit_errors.csv
+    -> data saved: plot06_eff_dt_explicit_profiles.csv
+  plot07_eff_dy_explicit.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    N=10, dy=0.2                 0.016000     0.2000     0.4000     1.195e-03    8.553e-04
+    N=20, dy=0.1                 0.004000     0.1000     0.4000     2.876e-04    2.162e-04
+    N=40, dy=0.05                0.001000     0.0500     0.4000     7.178e-05    5.431e-05
+    N=80, dy=0.025               0.000250     0.0250     0.4000     1.790e-05    1.364e-05
+
+    -> data saved: plot07_eff_dy_explicit_errors.csv
+    -> data saved: plot07_eff_dy_explicit_profiles.csv
+  plot08_eff_r_explicit.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    r=0.10                       0.000250     0.0500     0.1000     2.043e-05    1.545e-05
+    r=0.25                       0.000625     0.0500     0.2500     2.564e-05    1.941e-05
+    r=0.40                       0.001000     0.0500     0.4000     7.178e-05    5.431e-05
+    r=0.50                       0.001250     0.0500     0.5000     1.028e-04    7.760e-05
+    r=0.60                       0.001500     0.0500     0.6000     8.152e+03    5.510e+03
+
+    -> data saved: plot08_eff_r_explicit_errors.csv
+    -> data saved: plot08_eff_r_explicit_profiles.csv
+
+--- Effect Studies: Implicit Euler ---
+  (Unconditionally stable)
+
+  plot09_eff_dt_implicit.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    dt=0.0005, r=0.20            0.000500     0.0500     0.2000     1.123e-04    8.503e-05
+    dt=0.001,  r=0.40            0.001000     0.0500     0.4000     1.735e-04    1.313e-04
+    dt=0.005,  r=2.0             0.005000     0.0500     2.0000     6.575e-04    4.990e-04
+    dt=0.025,  r=10.0            0.025000     0.0500     10.0000    2.947e-03    2.266e-03
+    dt=0.125,  r=50.0            0.125000     0.0500     50.0000    1.327e-02    1.107e-02
+
+    -> data saved: plot09_eff_dt_implicit_errors.csv
+    -> data saved: plot09_eff_dt_implicit_profiles.csv
+  plot10_eff_dy_implicit.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    N=10, dy=0.2                 0.016000     0.2000     0.4000     2.643e-03    1.930e-03
+    N=20, dy=0.1                 0.004000     0.1000     0.4000     6.829e-04    5.161e-04
+    N=40, dy=0.05                0.001000     0.0500     0.4000     1.735e-04    1.313e-04
+    N=80, dy=0.025               0.000250     0.0250     0.4000     4.343e-05    3.308e-05
+
+    -> data saved: plot10_eff_dy_implicit_errors.csv
+    -> data saved: plot10_eff_dy_implicit_profiles.csv
+  plot11_eff_r_implicit.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    r=0.5                        0.001250     0.0500     0.5000     2.040e-04    1.544e-04
+    r=2.0                        0.005000     0.0500     2.0000     6.575e-04    4.990e-04
+    r=10.0                       0.025000     0.0500     10.0000    2.947e-03    2.266e-03
+    r=50.0                       0.125000     0.0500     50.0000    1.327e-02    1.107e-02
+
+    -> data saved: plot11_eff_r_implicit_errors.csv
+    -> data saved: plot11_eff_r_implicit_profiles.csv
+
+--- Effect Studies: RK4 ---
+  (Stability investigated numerically)
+
+  plot12_eff_dt_rk4.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    dt=0.0005, r=0.20            0.000500     0.0500     0.2000     5.110e-05    3.866e-05
+    dt=0.001,  r=0.40            0.001000     0.0500     0.4000     5.110e-05    3.866e-05
+    dt=0.0015, r=0.60            0.001500     0.0500     0.6000     5.112e-05    3.875e-05
+    dt=0.002,  r=0.80            0.002000     0.0500     0.8000     9.441e+06    7.740e+06
+
+    -> data saved: plot12_eff_dt_rk4_errors.csv
+    -> data saved: plot12_eff_dt_rk4_profiles.csv
+  plot13_eff_dy_rk4.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    N=10, dy=0.2                 0.016000     0.2000     0.4000     8.031e-04    5.781e-04
+    N=20, dy=0.1                 0.004000     0.1000     0.4000     2.024e-04    1.524e-04
+    N=40, dy=0.05                0.001000     0.0500     0.4000     5.110e-05    3.866e-05
+    N=80, dy=0.025               0.000250     0.0250     0.4000     1.278e-05    9.732e-06
+
+    -> data saved: plot13_eff_dy_rk4_errors.csv
+    -> data saved: plot13_eff_dy_rk4_profiles.csv
+  plot14_eff_r_rk4.png
+    Label                        dt           dy         r          E_inf        E_rms
+    ------------------------------------------------------------------------------------
+    r=0.25                       0.000625     0.0500     0.2500     5.110e-05    3.866e-05
+    r=0.50                       0.001250     0.0500     0.5000     5.110e-05    3.866e-05
+    r=0.65                       0.001625     0.0500     0.6500     5.113e-05    3.880e-05
+    r=0.70                       0.001750     0.0500     0.7000     5.344e-05    3.868e-05
+    r=0.80                       0.002000     0.0500     0.8000     9.441e+06    7.740e+06
+
+    -> data saved: plot14_eff_r_rk4_errors.csv
+    -> data saved: plot14_eff_r_rk4_profiles.csv
+
+--- Error Convergence Analysis ---
+  plot15_error_convergence.png
+    -> data saved: plot15_error_convergence_data.csv
+
+=====================================================================================
+ SUMMARY ERROR TABLE (baseline: Ny=40, dt=0.001, r=0.4, evaluated at t*=1.0)
+=====================================================================================
+ Method               E_inf          E_rms          Q_num          Q_exact        tau_num        tau_exact
+ ------------------------------------------------------------------------------------------
+ Explicit             7.773814e-05   5.429467e-05   0.61065877     0.61094786     0.93124100     0.93125968
+ Implicit             1.887483e-04   1.318275e-04   0.61031964     0.61094786     0.93082155     0.93125968
+ RK4                  5.552156e-05   3.877794e-05   0.61048918     0.61094786     0.93103125     0.93125968
+    -> data saved: summary_table.csv
+    -> data saved: timeseries_explicit.csv
+    -> data saved: timeseries_implicit.csv
+    -> data saved: timeseries_rk4.csv
+
+ All 15 plots saved to: D:\AME 531\Proj1\P1_CODE_CLD\project1_final
+ All CSV data saved to:  D:\AME 531\Proj1\P1_CODE_CLD\project1_final\data
+=================================================================

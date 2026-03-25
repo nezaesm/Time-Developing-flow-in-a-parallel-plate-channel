@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-AME 531 Project 1 — Time-Developing Flow in a Parallel Plate Channel
-
+AME 531 Project 1 — Time Developing Flow in a Parallel Plate Channel
 """
 
 import sys
@@ -149,18 +148,17 @@ def solve_rk4(Ny, dt, t_end):
         Qs.append(num_Q(u, dy)); taus.append(num_tau(u, dy))
     return y, np.array(times), profiles, np.array(Qs), np.array(taus), True
 
-# ================================================================
-#  3.  ERROR METRICS
-# ================================================================
+#  ERROR METRICS
+
 def Linf_error(u_num, y, t):
     return np.max(np.abs(u_num - exact_u(y, t)))
 
 def RMS_error(u_num, y, t):
     return np.sqrt(np.mean((u_num - exact_u(y, t))**2))
 
-# ================================================================
-#  4.  PLOTTING  — every plot is one self-contained function
-# ================================================================
+
+#  PLOTTING
+
 snap_times = [0.01, 0.05, 0.1, 0.2, 0.5, 1.0]
 
 def find_snap(times, target):
@@ -174,13 +172,13 @@ def save_csv(filepath, header, rows):
         writer.writerows(rows)
     print(f'    -> data saved: {filepath.name}')
 
-# ---------- Plots 1-3: Velocity profiles per method ----------
+#  Plots 1-3: Velocity profiles per method.
 def plot_velocity_evolution(y, times, profiles, method, fname):
     fig, ax = plt.subplots()
     ye = np.linspace(-1, 1, 300)
     cmap = plt.cm.plasma(np.linspace(0.15, 0.85, len(snap_times)))
 
-    # Collect data for CSV: each snapshot gets its own columns
+    # data for CSV:
     csv_header = ['y']
     csv_data_num = [y.tolist()]
     csv_data_exact = [ye.tolist()]
@@ -204,12 +202,12 @@ def plot_velocity_evolution(y, times, profiles, method, fname):
     fig.tight_layout(); fig.savefig(OUT/fname); plt.close(fig)
     print(f'  {fname}')
 
-    # Save numerical velocity profiles
+    # numerical velocity profiles
     csv_name = fname.replace('.png', '_numerical.csv')
     rows = list(zip(*csv_data_num))
     save_csv(DATA/csv_name, csv_header, rows)
 
-    # Save exact velocity profiles at same times (on fine grid)
+    # velocity profiles at same times
     csv_header_ex = ['y_exact']
     csv_data_ex = [ye.tolist()]
     for ts in snap_times:
@@ -224,7 +222,7 @@ def plot_velocity_evolution(y, times, profiles, method, fname):
     csv_name_ex = fname.replace('.png', '_exact.csv')
     save_csv(DATA/csv_name_ex, csv_header_ex, rows_ex)
 
-# ---------- Plots 4-5: Q(t) and tau(t) ----------
+#  Plots 4-5: Q(t) and tau(t)
 def plot_Q_tau(Q_runs, tau_runs):
     te = np.linspace(0, 1, 500)
     Qe = np.array([exact_Q(t) for t in te])
@@ -244,14 +242,13 @@ def plot_Q_tau(Q_runs, tau_runs):
     fig.tight_layout(); fig.savefig(OUT/'plot04_flowrate.png'); plt.close(fig)
     print('  plot04_flowrate.png')
 
-    # Save Q(t) data
+    # Q(t) data
     q_header = ['t_exact', 'Q_exact']
     q_data = [te.tolist(), Qe.tolist()]
     for name, t_arr, Q_arr in Q_runs:
         q_header.extend([f't_{name}', f'Q_{name}'])
         step = max(1, len(t_arr)//200)
         q_data.extend([t_arr[::step].tolist(), Q_arr[::step].tolist()])
-    # Pad shorter columns with empty
     max_len = max(len(col) for col in q_data)
     for col in q_data:
         col.extend(['' for _ in range(max_len - len(col))])
@@ -269,7 +266,7 @@ def plot_Q_tau(Q_runs, tau_runs):
     fig.tight_layout(); fig.savefig(OUT/'plot05_wallshear.png'); plt.close(fig)
     print('  plot05_wallshear.png')
 
-    # Save tau(t) data
+    #  tau(t) data
     tau_header = ['t_exact', 'tau_exact']
     tau_data = [te.tolist(), taue.tolist()]
     for name, t_arr, tau_arr in tau_runs:
@@ -281,7 +278,7 @@ def plot_Q_tau(Q_runs, tau_runs):
         col.extend(['' for _ in range(max_len - len(col))])
     save_csv(DATA/'plot05_wallshear_data.csv', tau_header, list(zip(*tau_data)))
 
-# ---------- Effect-study helper ----------
+#  Effect Study
 def effect_study(solver, method, param_label, configs, t_eval, fname, stability_note=None):
     """
     configs: list of (label_str, Ny, dt)
@@ -321,20 +318,19 @@ def effect_study(solver, method, param_label, configs, t_eval, fname, stability_
     fig.tight_layout(); fig.savefig(OUT/fname); plt.close(fig)
     print(f'  {fname}')
 
-    # Print error table
     print(f'    {"Label":<28} {"dt":<12} {"dy":<10} {"r":<10} {"E_inf":<12} {"E_rms":<12}')
     print(f'    {"-"*84}')
     for row in table_rows:
         print(f'    {row[0]:<28} {row[1]:<12} {row[2]:<10} {row[3]:<10} {row[4]:<12} {row[5]:<12}')
     print()
 
-    # Save effect study error table
+
     csv_err_name = fname.replace('.png', '_errors.csv')
     save_csv(DATA/csv_err_name,
              ['Label', 'dt', 'dy', 'r', 'E_inf', 'E_rms'],
              table_rows)
 
-    # Save velocity profile data for each configuration
+    # velocity profile data for each configuration
     csv_prof_name = fname.replace('.png', '_profiles.csv')
     prof_header = ['y_exact', 'u_exact']
     prof_cols = [ye.tolist(), ue.tolist()]
@@ -350,22 +346,22 @@ def effect_study(solver, method, param_label, configs, t_eval, fname, stability_
         col.extend(['' for _ in range(max_len - len(col))])
     save_csv(DATA/csv_prof_name, prof_header, list(zip(*prof_cols)))
 
-# ================================================================
-#  5.  MAIN
-# ================================================================
+
+#  MAIN
+
 def main():
     print('='*65)
     print(' AME 531 PROJECT 1: Time-Developing Channel Flow')
     print(' Domain: -1 ≤ y* ≤ 1, Wall shear evaluated at y = +1')
     print('='*65)
 
-    # --- Baseline parameters ---
+    #  Baseline parameters
     Ny = 40;  dy = 2.0/Ny  # dy = 0.05
-    r_base = 0.4;  dt_base = r_base * dy**2  # dt = 0.001, stable for explicit
+    r_base = 0.4;  dt_base = r_base * dy**2  
     t_final = 1.0
     print(f'\nBaseline: Ny={Ny}, dy={dy:.4f}, r={r_base}, dt={dt_base:.6f}\n')
 
-    # === PLOTS 1-3: Velocity profiles ===
+    #  PLOTS 1-3: Velocity profiles
     print('--- Velocity Profiles ---')
     y_e, t_e, p_e, Q_e, tau_e, _ = solve_explicit(Ny, dt_base, t_final)
     plot_velocity_evolution(y_e, t_e, p_e, 'Explicit Euler', 'plot01_vel_explicit.png')
@@ -376,7 +372,7 @@ def main():
     y_r, t_r, p_r, Q_r, tau_r, _ = solve_rk4(Ny, dt_base, t_final)
     plot_velocity_evolution(y_r, t_r, p_r, '4th-Order Runge-Kutta', 'plot03_vel_rk4.png')
 
-    # === PLOTS 4-5: Q(t) and tau(t) ===
+    #  PLOTS 4-5: Q(t) and tau(t)
     print('\n--- Flow Rate & Wall Shear ---')
     plot_Q_tau(
         Q_runs=[
@@ -391,14 +387,14 @@ def main():
         ],
     )
 
-    # ============================================================
-    #  EFFECT STUDIES  (9 plots: 3 methods × 3 parameters)
-    # ============================================================
-    t_eval = 0.1  # time at which to compare profiles
+    
+    #  EFFECT STUDIES
 
-    # ---- EXPLICIT EULER ----
+    t_eval = 0.1  
+
+    #  EXPLICIT EULER
     print('\n--- Effect Studies: Explicit Euler ---')
-    print('  (Stability limit from course notes: r ≤ 0.5, Eq. 4.30)\n')
+    print('  (Stability limit: r ≤ 0.5)\n')
 
     # Effect of dt
     effect_study(solve_explicit, 'Explicit Euler', 'Δt', [
@@ -406,7 +402,7 @@ def main():
         ('Δt=0.001,  r=0.40', 40, 0.001),
         ('Δt=0.00125,r=0.50', 40, 0.00125),
         ('Δt=0.0015, r=0.60', 40, 0.0015),
-    ], t_eval, 'plot06_eff_dt_explicit.png', stability_note='Stability: r ≤ 0.5 (Student Notes Eq. 4.30)')
+    ], t_eval, 'plot06_eff_dt_explicit.png', stability_note='Stability: r ≤ 0.5')
 
     # Effect of dy
     effect_study(solve_explicit, 'Explicit Euler', 'Δy', [
@@ -423,11 +419,11 @@ def main():
         ('r=0.40', 40, 0.40*dy**2),
         ('r=0.50', 40, 0.50*dy**2),
         ('r=0.60', 40, 0.60*dy**2),
-    ], t_eval, 'plot08_eff_r_explicit.png', stability_note='Stability: r ≤ 0.5 (Student Notes Eq. 4.30)')
+    ], t_eval, 'plot08_eff_r_explicit.png', stability_note='Stability: r ≤ 0.5')
 
-    # ---- IMPLICIT EULER ----
+    # IMPLICIT EULER
     print('\n--- Effect Studies: Implicit Euler ---')
-    print('  (Unconditionally stable — Student Notes Section 4.3.1)\n')
+    print('  (Unconditionally stable \n')
 
     effect_study(solve_implicit, 'Implicit Euler', 'Δt', [
         ('Δt=0.0005, r=0.20', 40, 0.0005),
@@ -435,7 +431,7 @@ def main():
         ('Δt=0.005,  r=2.0',  40, 0.005),
         ('Δt=0.025,  r=10.0', 40, 0.025),
         ('Δt=0.125,  r=50.0', 40, 0.125),
-    ], t_eval, 'plot09_eff_dt_implicit.png', stability_note='Unconditionally stable (Notes §4.3.1)')
+    ], t_eval, 'plot09_eff_dt_implicit.png', stability_note='Unconditionally stable')
 
     effect_study(solve_implicit, 'Implicit Euler', 'Δy', [
         ('N=10, Δy=0.2',  10, 0.4*0.2**2),
@@ -449,11 +445,11 @@ def main():
         ('r=2.0',  40, 2.0*dy**2),
         ('r=10.0', 40, 10.0*dy**2),
         ('r=50.0', 40, 50.0*dy**2),
-    ], t_eval, 'plot11_eff_r_implicit.png', stability_note='Unconditionally stable (Notes §4.3.1)')
+    ], t_eval, 'plot11_eff_r_implicit.png', stability_note='Unconditionally stable')
 
-    # ---- RK4 ----
+    #  RK4
     print('\n--- Effect Studies: RK4 ---')
-    print('  (Stability investigated numerically — not derived in course notes)\n')
+    print('  (Stability investigated numerically \n')
 
     effect_study(solve_rk4, 'RK4', 'Δt', [
         ('Δt=0.0005, r=0.20', 40, 0.0005),
@@ -477,9 +473,9 @@ def main():
         ('r=0.80', 40, 0.80*dy**2),
     ], t_eval, 'plot14_eff_r_rk4.png', stability_note='Stability limit observed numerically near r ≈ 0.7')
 
-    # ============================================================
-    #  PLOT 15: Error convergence — quantitative accuracy
-    # ============================================================
+
+    #  PLOT 15: Error convergence
+    
     print('\n--- Error Convergence Analysis ---')
     fig, axes = plt.subplots(1, 3, figsize=(16, 5))
     for ax_i, (solver, mname) in enumerate([(solve_explicit,'Explicit'), (solve_implicit,'Implicit'), (solve_rk4,'RK4')]):
@@ -499,7 +495,7 @@ def main():
         if len(valid) >= 2:
             d_v, e_v = zip(*valid)
             axes[ax_i].loglog(d_v, e_v, 'bo-', lw=2, ms=8, label=f'{mname} E∞')
-            # Reference slopes
+            
             d_ref = np.array(d_v)
             axes[ax_i].loglog(d_ref, e_v[0]*(d_ref/d_ref[0])**1, 'k--', lw=1, alpha=0.5, label='O(Δt)')
             if mname == 'RK4':
@@ -510,7 +506,7 @@ def main():
     fig.tight_layout(); fig.savefig(OUT/'plot15_error_convergence.png'); plt.close(fig)
     print('  plot15_error_convergence.png')
 
-    # Save error convergence data
+    # error convergence
     conv_rows = []
     for solver, mname in [(solve_explicit,'Explicit'), (solve_implicit,'Implicit'), (solve_rk4,'RK4')]:
         dts_c = [0.002, 0.001, 0.0005, 0.00025] if mname != 'Implicit' else [0.01, 0.005, 0.001, 0.0005]
@@ -531,9 +527,9 @@ def main():
              ['Method', 'dt', 'r', 'E_inf_at_t0.5', 'E_rms_at_t0.5'],
              conv_rows)
 
-    # ============================================================
+    
     #  SUMMARY TABLE
-    # ============================================================
+    
     print('\n' + '='*85)
     print(' SUMMARY ERROR TABLE (baseline: Ny=40, dt=0.001, r=0.4, evaluated at t*=1.0)')
     print('='*85)
@@ -550,7 +546,7 @@ def main():
         er = RMS_error(u_final, y_s, t_s[-1])
         print(f' {name:<20} {ei:<14.6e} {er:<14.6e} {Q_s[-1]:<14.8f} {q_ex:<14.8f} {tau_s[-1]:<14.8f} {tau_ex:<14.8f}')
 
-    # Save summary table to CSV
+    
     summary_rows = []
     for name, y_s, t_s, p_s, Q_s, tau_s in [
         ('Explicit', y_e, t_e, p_e, Q_e, tau_e),
@@ -567,13 +563,13 @@ def main():
              ['Method','Ny','dt','dy','r','E_inf','E_rms','Q_num','Q_exact','Q_error','tau_num','tau_exact','tau_error'],
              summary_rows)
 
-    # Save the full time-history Q(t) and tau(t) for each method
+    
     for name, t_s, Q_s, tau_s in [
         ('explicit', t_e, Q_e, tau_e),
         ('implicit', t_i, Q_i, tau_i),
         ('rk4',      t_r, Q_r, tau_r),
     ]:
-        step = max(1, len(t_s)//1000)  # downsample to ~1000 points
+        step = max(1, len(t_s)//1000)  
         t_ds = t_s[::step]
         Q_ds = Q_s[::step]
         tau_ds = tau_s[::step]
